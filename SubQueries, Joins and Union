@@ -1,0 +1,141 @@
+-- what is the company name and region every customer is from who has 
+-- had an order with freight over 100?
+SELECT
+  companyname
+, region
+from Customers
+where customerid in (
+  select customerid
+  from Orders
+  where freight > 100 
+)
+
+-- what is the company name, contact name and phone number of the customers that have bought Tofu?
+SELECT
+  companyname
+, contactname
+, phone
+from Customers
+where customerid in (
+  select customerid
+  from Orders
+  where orderid in (
+    select orderid
+    from [Order Details]
+    where productid in (
+      select productid
+      from Products
+      where productname = "Tofu"
+    )
+  )
+)
+
+-- Employee last name, city for supplier  12
+select 
+  firstname
+, city
+from Employees
+where employeeid in (
+  select employeeid
+  from Orders
+  where orderid in (
+    select orderid
+    from [Order Details]
+    where productid in (
+      select productid
+      from Products
+      where supplierid = 12
+    )
+  )
+)
+
+-- what is the total number of orders and region for each company name?
+
+select orderid
+from Orders
+
+select 
+  companyname
+, count(region) as No_Of_Regions
+, (select COUNT(orderid)
+   from Orders
+   where Orders.customerid = Customers.customerid
+  )  AS No_Of_Orders
+from Customers
+GROUP by companyname
+
+-- supplier contact name, phone, num productscategories
+select 
+  contactname
+, phone
+, (select count(productid)
+   from Products
+   where Products.supplierid = Suppliers.supplierid
+  ) AS No_Of_products 
+From suppliers
+
+-- List all suppliers company names along with the product names and prices that they provide.
+SELECT
+  s.companyname
+, p.productname
+, p.unitprice
+from suppliers s
+inner join Products p 
+on s.SupplierID = p.SupplierID
+
+-- For each order made, list the customer company name and the employee's last name.
+SELECT
+  o.orderid
+, c.companyname
+, e.lastname
+from Orders o
+inner join Customers c
+on o.CustomerID = c.CustomerID
+inner join Employees e
+on o.EmployeeID = e.EmployeeID
+ 
+-- List all customer's company name with how many orders they made.
+SELECT
+  c.companyname
+, COUNT(o.OrderID) AS No_Of_Orders
+from Customers c
+left join Orders o 
+on c.CustomerID = o.CustomerID
+group by 1
+order by 2
+
+-- Show the SupplierID, ProductName, CompanyName from all product Supplied by
+-- "Exotic Liquids", "Specialty Biscuits, Ltd.", "Escargots Nouveaux" sorted by the supplier ID
+SELECT
+  s.supplierid
+, p.productname
+, s.companyname
+from Products p
+left join Suppliers s
+on p.SupplierID = s.SupplierID
+where companyname in ("Exotic Liquids", "Specialty Biscuits, Ltd.", "Escargots Nouveaux")
+order by 1
+
+-- list all the cities inside germany that either our cutomers or suppliers are residing
+select city
+from Customers
+where country = "Germany"
+ UNION
+SELECT city
+from Suppliers
+where  country = "Germany"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
