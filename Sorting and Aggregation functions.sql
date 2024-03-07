@@ -84,6 +84,51 @@ FROM Orders
 where shipcountry != "USA"
 GROUP BY 3, 1
 
+-- How many orders where shipped after the required date?
+select count(*) as No_Of_lated_orders
+from Orders
+where shippeddate > requireddate
+
+-- What is the employee ID who delayed "shipped order after the required date" the most numbers of orders? 
+-- and what is the number of orders delayed by him?
+select 
+  employeeid
+, count(*) as lated_orders
+from Orders
+where shippeddate > requireddate
+group by 1
+order by 2 desc
+
+--Show the total quantity ordered per product, How many products for which the quantity ordered is fewer than 200,000?
+SELECT
+  productid
+, sum(quantity) as Total_Quantity
+from "Order Details"
+GROUP by 1
+having sum(quantity) < 200000
+order by 1
+
+--If I increased all products in category 3 by 20%, what would be the most expensive product in this category? 
+--and what it it's new price?
+select 
+  productid
+, unitprice
+, unitprice * 1.2 as new_price
+from Products
+where categoryid = 3
+order by 3 desc
+
+-- What is the name of the customer who ordered exactly 175 order? 
+--if multiple choose the last name from an alphabetical order.
+SELECT
+  customerid
+, count(orderid) as No_Of_Orders
+from Orders
+group by 1
+having count(orderid) = 175
+order by 1 desc
+
+
 
 
 
